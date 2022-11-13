@@ -18,7 +18,7 @@ Uniswap V3 examples of, sqrtPriceX96 to price, Get Liquidity amounts, Get Fees a
 For getting a price from the sqrtPriceX96
 This package includes all the call needed to get information needed
 
-you would only need to replace the two token addresses, the pool fee in the st() starter funciton
+you would only need to replace the two token addresses, and the pool fee in the st() starter funciton
 
 Pool fees in code version are
 1% == 10000, 0.3% == 3000, 0.05% == 500, 0.01 == 100
@@ -32,7 +32,7 @@ For getting a price from the sqrtPriceX96
 This package includes all the call needed to get information needed
 
 for this outside of steps 1-6, you will only need to change the position ID at the bottom
-this is currently setup to show position 5 so change *start(5)* with your position ID
+this is currently setup to show position 5 so change *start(**5**)* with your position ID
 
 
 
@@ -43,4 +43,4 @@ For getting a price from the sqrtPriceX96
 This package includes all the call needed to get information needed
 
 for this outside of steps 1-6, you will only need to change the position ID at the bottom
-this is currently setup to show position 5 so change *start(5)* with your position ID
+this is currently setup to show position 5 so change *start(**5**)* with your position ID
