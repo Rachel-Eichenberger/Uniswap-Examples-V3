@@ -29,7 +29,7 @@ const NFTmanager = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88";
 
 
 
-async function getData(ownerAddress, tokenID){
+async function getData(tokenID){
 	var FactoryContract = new ethers.Contract(factory, IUniswapV3FactoryABI, provider);
 
 	var NFTContract =  new ethers.Contract(NFTmanager, IUniswapV3NFTmanagerABI, provider);
@@ -170,8 +170,8 @@ async function getFees(feeGrowthGlobal0, feeGrowthGlobal1, feeGrowth0Low, feeGro
 }
 
 
-async function Start(){
-	var data = await getData("0x11E4857Bb9993a50c685A79AFad4E6F65D518DDa", 5);
+async function Start(positionID){
+	var data = await getData(positionID);
 
 	
 	var Fees = await getFees(data.feeGrowthGlobal0X128, data.feeGrowthGlobal1X128, data.feeGrowth0Low, data.feeGrowth0Hi, data.feeGrowthInside0LastX128, data.feeGrowth1Low, data.feeGrowth1Hi, data.feeGrowthInside1LastX128, data.liquidity, data.T0d, data.T1d, data.tickLow, data.tickHigh, data.tickCurrent);
@@ -179,4 +179,4 @@ async function Start(){
 }
 
 
-Start();
+Start(5);
