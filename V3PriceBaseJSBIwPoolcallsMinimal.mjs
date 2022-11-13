@@ -18,15 +18,6 @@ const provider = new ethers.providers.JsonRpcProvider("https://eth-mainnet.alche
 
 const factory = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
 
-function toPlainString(num) {
-  return (''+ +num).replace(/(-?)(\d*)\.?(\d*)e([+-]\d+)/,
-    function(a,b,c,d,e) {
-      return e < 0
-        ? b + '0.' + Array(1-e-c.length).join(0) + c + d
-        : b + c + d + Array(e-d.length+1).join(0);
-    });
-}
-
 
 async function getPoolData(token0, token1, fee){
 	var token0contract =  new ethers.Contract(token0, ERC20, provider);
@@ -56,8 +47,8 @@ function GetPrice(testz){
 	//console.log("");
 	
 		// Convert to wei
-	var buyOneOfToken0Wei = toPlainString(Math.floor(buyOneOfToken0 * (10**token1Decimals)));
-	var buyOneOfToken1Wei = toPlainString(Math.floor(buyOneOfToken1 * (10**token0Decimals)));
+	var buyOneOfToken0Wei = (Math.floor(buyOneOfToken0 * (10**token1Decimals))).toLocaleString('fullwide', {useGrouping:false});
+	var buyOneOfToken1Wei = (Math.floor(buyOneOfToken1 * (10**token0Decimals))).toLocaleString('fullwide', {useGrouping:false});
 	console.log("price of token0 in value of token1 in lowest decimal : " + buyOneOfToken0Wei);
 	console.log("price of token1 in value of token1 in lowest decimal : " + buyOneOfToken1Wei);
 	console.log("");
