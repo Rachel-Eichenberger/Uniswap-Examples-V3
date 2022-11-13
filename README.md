@@ -3,7 +3,7 @@ Uniswap V3 examples of, sqrtPriceX96 to price, Get Liquidity amounts, Get Fees a
 
 
 To use these files you will need nodeJS and:
-1. to change the (<PATH>) to the local drive path
+1. to change the (< PATH >) to the local drive path
 2. to change the (<RPC_Key>) by adding your RPC_Key from a service like Alchemy, Infura or Quicknode
 3. npm install @uniswap/sdk
 4. npm install ethers
