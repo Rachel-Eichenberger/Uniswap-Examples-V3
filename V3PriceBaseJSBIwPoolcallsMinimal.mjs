@@ -20,8 +20,8 @@ const factory = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
 
 
 async function getPoolData(token0, token1, fee){
-	var t0 = token0 < token1 ? token0 : token1;
-	var t1 = token0 < token1 ? token1 : token0;
+	var t0 = token0.toLowerCase() < token1.toLowerCase() ? token0 : token1;
+	var t1 = token0.toLowerCase() < token1.toLowerCase() ? token1 : token0;
 	var token0contract =  new ethers.Contract(t0, ERC20, provider);
 	var token1contract =  new ethers.Contract(t1, ERC20, provider);
 	var token0Decimal = await token0contract.decimals();
