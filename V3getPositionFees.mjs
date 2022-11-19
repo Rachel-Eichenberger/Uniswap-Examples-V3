@@ -81,7 +81,7 @@ const Q128 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128));
 const Q256 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(256));
 
 
-async function toBigNumber(numstr){
+function toBigNumber(numstr){
   let bi = numstr;
   if (typeof sqrtRatio !== 'bigint') {
     bi = JSBI.BigInt(numstr);
@@ -90,7 +90,7 @@ async function toBigNumber(numstr){
 };
 
 
-export function subIn256(x, y){
+function subIn256(x, y){
   const difference = JSBI.subtract(x, y)
 
   if (JSBI.lessThan(difference, ZERO)) {
@@ -102,69 +102,59 @@ export function subIn256(x, y){
 
 
 async function getFees(feeGrowthGlobal0, feeGrowthGlobal1, feeGrowth0Low, feeGrowth0Hi, feeGrowthInside0, feeGrowth1Low, feeGrowth1Hi, feeGrowthInside1, liquidity, decimals0, decimals1, tickLower, tickUpper, tickCurrent){
-	// Check out the relevant formulas below which are from Uniswap Whitepaper Section 6.3 and 6.4
-	// 𝑓𝑟 =𝑓𝑔−𝑓𝑏(𝑖𝑙)−𝑓𝑎(𝑖𝑢)
-	// 𝑓𝑢 =𝑙·(𝑓𝑟(𝑡1)−𝑓𝑟(𝑡0))
-	// Global fee growth per liquidity '𝑓𝑔' for both token 0 and token 1
-	let feeGrowthGlobal_0 = await toBigNumber(feeGrowthGlobal0);
-	let feeGrowthGlobal_1 = await toBigNumber(feeGrowthGlobal1);
+	
+	let feeGrowthGlobal_0 = toBigNumber(feeGrowthGlobal0);
+	let feeGrowthGlobal_1 = toBigNumber(feeGrowthGlobal1);
 
-	// Fee growth outside '𝑓𝑜' of our lower tick for both token 0 and token 1
-	let tickLowerFeeGrowthOutside_0 = await toBigNumber(feeGrowth0Low);
-	let tickLowerFeeGrowthOutside_1 = await toBigNumber(feeGrowth1Low);
+	
+	let tickLowerFeeGrowthOutside_0 = toBigNumber(feeGrowth0Low);
+	let tickLowerFeeGrowthOutside_1 = toBigNumber(feeGrowth1Low);
 
-	// Fee growth outside '𝑓𝑜' of our upper tick for both token 0 and token 1
-	let tickUpperFeeGrowthOutside_0 = await toBigNumber(feeGrowth0Hi);
-	let tickUpperFeeGrowthOutside_1 = await toBigNumber(feeGrowth1Hi);
+	
+	let tickUpperFeeGrowthOutside_0 = toBigNumber(feeGrowth0Hi);
+	let tickUpperFeeGrowthOutside_1 = toBigNumber(feeGrowth1Hi);
 
-	// These are '𝑓𝑏(𝑖𝑙)' and '𝑓𝑎(𝑖𝑢)' from the formula
-	// for both token 0 and token 1
+	
 	let tickLowerFeeGrowthBelow_0 = ZERO;
 	let tickLowerFeeGrowthBelow_1 = ZERO;
 	let tickUpperFeeGrowthAbove_0 = ZERO;
 	let tickUpperFeeGrowthAbove_1 = ZERO;
 
-	// These are the calculations for '𝑓𝑎(𝑖)' from the formula
-	// for both token 0 and token 1
+	
 	if (tickCurrent >= tickUpper){
-		tickUpperFeeGrowthAbove_0 = await subIn256(feeGrowthGlobal_0, tickUpperFeeGrowthOutside_0);
-		tickUpperFeeGrowthAbove_1 = await subIn256(feeGrowthGlobal_1, tickUpperFeeGrowthOutside_1);
+		tickUpperFeeGrowthAbove_0 = subIn256(feeGrowthGlobal_0, tickUpperFeeGrowthOutside_0);
+		tickUpperFeeGrowthAbove_1 = subIn256(feeGrowthGlobal_1, tickUpperFeeGrowthOutside_1);
 	}else{
 		tickUpperFeeGrowthAbove_0 = tickUpperFeeGrowthOutside_0
 		tickUpperFeeGrowthAbove_1 = tickUpperFeeGrowthOutside_1
 	}
 
-	// These are the calculations for '𝑓b(𝑖)' from the formula
-	// for both token 0 and token 1
+	
 	if (tickCurrent >= tickLower){
 		tickLowerFeeGrowthBelow_0 = tickLowerFeeGrowthOutside_0
 		tickLowerFeeGrowthBelow_1 = tickLowerFeeGrowthOutside_1
 	}else{
-		tickLowerFeeGrowthBelow_0 = await subIn256(feeGrowthGlobal_0, tickLowerFeeGrowthOutside_0);
-		tickLowerFeeGrowthBelow_1 = await subIn256(feeGrowthGlobal_1, tickLowerFeeGrowthOutside_1);
+		tickLowerFeeGrowthBelow_0 = subIn256(feeGrowthGlobal_0, tickLowerFeeGrowthOutside_0);
+		tickLowerFeeGrowthBelow_1 = subIn256(feeGrowthGlobal_1, tickLowerFeeGrowthOutside_1);
 	}
 
+		
+	let fr_t1_0 = subIn256(subIn256(feeGrowthGlobal_0, tickLowerFeeGrowthBelow_0), tickUpperFeeGrowthAbove_0);
+	let fr_t1_1 = subIn256(subIn256(feeGrowthGlobal_1, tickLowerFeeGrowthBelow_1), tickUpperFeeGrowthAbove_1);
+
 	
-	// Calculations for '𝑓𝑟(𝑡1)' part of the '𝑓𝑢 =𝑙·(𝑓𝑟(𝑡1)−𝑓𝑟(𝑡0))' formula
-	// for both token 0 and token 1
-	let fr_t1_0 = await subIn256(await subIn256(feeGrowthGlobal_0, tickLowerFeeGrowthBelow_0), tickUpperFeeGrowthAbove_0);
-	let fr_t1_1 = await subIn256(await subIn256(feeGrowthGlobal_1, tickLowerFeeGrowthBelow_1), tickUpperFeeGrowthAbove_1);
+	let feeGrowthInsideLast_0 = toBigNumber(feeGrowthInside0);
+	let feeGrowthInsideLast_1 = toBigNumber(feeGrowthInside1);
 
-	// '𝑓𝑟(𝑡0)' part of the '𝑓𝑢 =𝑙·(𝑓𝑟(𝑡1)−𝑓𝑟(𝑡0))' formula
-	// for both token 0 and token 1
-	let feeGrowthInsideLast_0 = await toBigNumber(feeGrowthInside0);
-	let feeGrowthInsideLast_1 = await toBigNumber(feeGrowthInside1);
-
-	// The final calculations for the '𝑓𝑢 =𝑙·(𝑓𝑟(𝑡1)−𝑓𝑟(𝑡0))' uncollected fees formula
-	// for both token 0 and token 1 since we now know everything that is needed to compute it
-	let uncollectedFees_0 = (liquidity * await subIn256(fr_t1_0, feeGrowthInsideLast_0)) / Q128;
-	let uncollectedFees_1 = (liquidity * await subIn256(fr_t1_1, feeGrowthInsideLast_1)) / Q128;
+	
+	let uncollectedFees_0 = (liquidity * subIn256(fr_t1_0, feeGrowthInsideLast_0)) / Q128;
+	let uncollectedFees_1 = (liquidity * subIn256(fr_t1_1, feeGrowthInsideLast_1)) / Q128;
 	console.log("Amount fees token 0 wei: "+Math.floor(uncollectedFees_0));
 	console.log("Amount fees token 1 wei: "+Math.floor(uncollectedFees_1));
 	
-	// Decimal adjustment to get final results
-	let uncollectedFeesAdjusted_0 = (uncollectedFees_0 / await toBigNumber(10**decimals0)).toFixed(decimals0);
-	let uncollectedFeesAdjusted_1 = (uncollectedFees_1 / await toBigNumber(10**decimals1)).toFixed(decimals1);
+	
+	let uncollectedFeesAdjusted_0 = (uncollectedFees_0 / toBigNumber(10**decimals0)).toFixed(decimals0);
+	let uncollectedFeesAdjusted_1 = (uncollectedFees_1 / toBigNumber(10**decimals1)).toFixed(decimals1);
 	console.log("Amount fees token 0 Human format: "+uncollectedFeesAdjusted_0);
 	console.log("Amount fees token 1 Human format: "+uncollectedFeesAdjusted_1);
 }
