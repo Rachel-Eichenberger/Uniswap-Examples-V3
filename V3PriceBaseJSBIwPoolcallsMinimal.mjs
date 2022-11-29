@@ -20,19 +20,19 @@ const factory = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
 
 
 async function getPoolData(token0, token1, fee){
-	var t0 = token0.toLowerCase() < token1.toLowerCase() ? token0 : token1;
-	var t1 = token0.toLowerCase() < token1.toLowerCase() ? token1 : token0;
-	var token0contract =  new ethers.Contract(t0, ERC20, provider);
-	var token1contract =  new ethers.Contract(t1, ERC20, provider);
-	var token0Decimal = await token0contract.decimals();
-	var token1Decimal = await token1contract.decimals();
-	var token0sym = await token0contract.symbol();
-	var token1sym = await token1contract.symbol();
-	var FactoryContract =  new ethers.Contract(factory, IUniswapV3FactoryABI, provider);
-	var V3pool = await FactoryContract.getPool(token0, token1, fee);
-	var poolContract =  new ethers.Contract(V3pool, IUniswapV3PoolABI, provider);
-	var slot0 = await poolContract.slot0();
-	var pairName = token0sym +"/"+ token1sym;
+	const t0 = token0.toLowerCase() < token1.toLowerCase() ? token0 : token1;
+	const t1 = token0.toLowerCase() < token1.toLowerCase() ? token1 : token0;
+	const token0contract =  new ethers.Contract(t0, ERC20, provider);
+	const token1contract =  new ethers.Contract(t1, ERC20, provider);
+	const token0Decimal = await token0contract.decimals();
+	const token1Decimal = await token1contract.decimals();
+	const token0sym = await token0contract.symbol();
+	const token1sym = await token1contract.symbol();
+	const FactoryContract =  new ethers.Contract(factory, IUniswapV3FactoryABI, provider);
+	const V3pool = await FactoryContract.getPool(token0, token1, fee);
+	const poolContract =  new ethers.Contract(V3pool, IUniswapV3PoolABI, provider);
+	const slot0 = await poolContract.slot0();
+	const pairName = token0sym +"/"+ token1sym;
 	return {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "T0d": token0Decimal, "T1d": token1Decimal}
 }
 
@@ -42,15 +42,15 @@ function GetPrice(testz){
 	let token0Decimals = testz.T0d;
 	let token1Decimals = testz.T1d;
 	
-	var buyOneOfToken0 = (sqrtPriceX96 * sqrtPriceX96 * (10**token0Decimals) / (10**token1Decimals) / JSBI.BigInt(2) ** (JSBI.BigInt(192))).toFixed(token1Decimals);
-	var buyOneOfToken1 = (1 / buyOneOfToken0).toFixed(token0Decimals);
+	const buyOneOfToken0 = (sqrtPriceX96 * sqrtPriceX96 * (10**token0Decimals) / (10**token1Decimals) / JSBI.BigInt(2) ** (JSBI.BigInt(192))).toFixed(token1Decimals);
+	const buyOneOfToken1 = (1 / buyOneOfToken0).toFixed(token0Decimals);
 	console.log("price of token0 in value of token1 : " + buyOneOfToken0.toString());
 	console.log("price of token1 in value of token0 : " + buyOneOfToken1.toString());
 	//console.log("");
 	
 		// Convert to wei
-	var buyOneOfToken0Wei = (Math.floor(buyOneOfToken0 * (10**token1Decimals))).toLocaleString('fullwide', {useGrouping:false});
-	var buyOneOfToken1Wei = (Math.floor(buyOneOfToken1 * (10**token0Decimals))).toLocaleString('fullwide', {useGrouping:false});
+	const buyOneOfToken0Wei = (Math.floor(buyOneOfToken0 * (10**token1Decimals))).toLocaleString('fullwide', {useGrouping:false});
+	const buyOneOfToken1Wei = (Math.floor(buyOneOfToken1 * (10**token0Decimals))).toLocaleString('fullwide', {useGrouping:false});
 	console.log("price of token0 in value of token1 in lowest decimal : " + buyOneOfToken0Wei);
 	console.log("price of token1 in value of token1 in lowest decimal : " + buyOneOfToken1Wei);
 	console.log("");
@@ -60,7 +60,7 @@ function GetPrice(testz){
 
 
 async function st(){
-	var data = await getPoolData("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "0xdAC17F958D2ee523a2206206994597C13D831ec7", 500);
+	const data = await getPoolData("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "0xdAC17F958D2ee523a2206206994597C13D831ec7", 500);
 	console.log(data)
 	GetPrice(data)
 }
