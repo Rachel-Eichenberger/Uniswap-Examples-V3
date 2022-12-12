@@ -68,8 +68,8 @@ function getTickAtSqrtRatio(sqrtPriceX96){
 
 
 async function getTokenAmounts(liquidity,sqrtPriceX96,tickLow,tickHigh,token0Decimal,token1Decimal){
-	let sqrtRatioA = Math.sqrt(1.0001**tickLow);
-	let sqrtRatioB = Math.sqrt(1.0001**tickHigh);
+	let sqrtRatioBelow = Math.sqrt(1.0001**tickLow);
+	let sqrtRatioAbove = Math.sqrt(1.0001**tickHigh);
 	
 	let currentTick = getTickAtSqrtRatio(sqrtPriceX96);
 	let sqrtPrice = sqrtPriceX96 / Q96;
@@ -77,14 +77,14 @@ async function getTokenAmounts(liquidity,sqrtPriceX96,tickLow,tickHigh,token0Dec
 	let amount0wei = 0;
 	let amount1wei = 0;
 	if(currentTick <= tickLow){
-		amount0wei = Math.floor(liquidity*((sqrtRatioB-sqrtRatioA)/(sqrtRatioA*sqrtRatioB)));
+		amount0wei = Math.floor(liquidity*((sqrtRatioAbove-sqrtRatioBelow)/(sqrtRatioBelow*sqrtRatioAbove)));
 	}
 	else if(currentTick > tickHigh){
-		amount1wei = Math.floor(liquidity*(sqrtRatioB-sqrtRatioA));
+		amount1wei = Math.floor(liquidity*(sqrtRatioAbove-sqrtRatioBelow));
 	}
 	else if(currentTick >= tickLow && currentTick < tickHigh){ 
-		amount0wei = Math.floor(liquidity*((sqrtRatioB-sqrtPrice)/(sqrtPrice*sqrtRatioB)));
-		amount1wei = Math.floor(liquidity*(sqrtPrice-sqrtRatioA));
+		amount0wei = Math.floor(liquidity*((sqrtRatioAbove-sqrtPrice)/(sqrtPrice*sqrtRatioAbove)));
+		amount1wei = Math.floor(liquidity*(sqrtPrice-sqrtRatioBelow));
 	}
 	
 	let amount0Human = (amount0wei/(10**token0Decimal)).toFixed(token0Decimal);
