@@ -24,8 +24,8 @@ async function getPoolData(token0, token1, fee){
 	const t1 = token0.toLowerCase() < token1.toLowerCase() ? token1 : token0;
 	const token0contract =  new ethers.Contract(t0, ERC20, provider);
 	const token1contract =  new ethers.Contract(t1, ERC20, provider);
-	const token0Decimal = await token0contract.decimals();
-	const token1Decimal = await token1contract.decimals();
+	const Decimal0 = await token0contract.decimals();
+	const Decimal1 = await token1contract.decimals();
 	const token0sym = await token0contract.symbol();
 	const token1sym = await token1contract.symbol();
 	const FactoryContract =  new ethers.Contract(factory, IUniswapV3FactoryABI, provider);
@@ -33,24 +33,24 @@ async function getPoolData(token0, token1, fee){
 	const poolContract =  new ethers.Contract(V3pool, IUniswapV3PoolABI, provider);
 	const slot0 = await poolContract.slot0();
 	const pairName = token0sym +"/"+ token1sym;
-	return {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "T0d": token0Decimal, "T1d": token1Decimal}
+	return {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "Decimal0": Decimal0, "Decimal1": Decimal1}
 }
 
 
-function GetPrice(testz){
-	let sqrtPriceX96 = testz.SqrtX96;
-	let token0Decimals = testz.T0d;
-	let token1Decimals = testz.T1d;
+function GetPrice(PoolInfo){
+	let sqrtPriceX96 = PoolInfo.SqrtX96;
+	let Decimal0 = PoolInfo.Decimal0;
+	let Decimal1 = PoolInfo.Decimal1;
 	
-	const buyOneOfToken0 = (sqrtPriceX96 * sqrtPriceX96 * (10**token0Decimals) / (10**token1Decimals) / JSBI.BigInt(2) ** (JSBI.BigInt(192))).toFixed(token1Decimals);
-	const buyOneOfToken1 = (1 / buyOneOfToken0).toFixed(token0Decimals);
+	const buyOneOfToken0 = (sqrtPriceX96 * sqrtPriceX96 * (10**Decimal0) / (10**Decimal1) / JSBI.BigInt(2) ** (JSBI.BigInt(192))).toFixed(Decimal1);
+	const buyOneOfToken1 = (1 / buyOneOfToken0).toFixed(Decimal0);
 	console.log("price of token0 in value of token1 : " + buyOneOfToken0.toString());
 	console.log("price of token1 in value of token0 : " + buyOneOfToken1.toString());
 	//console.log("");
 	
 		// Convert to wei
-	const buyOneOfToken0Wei = (Math.floor(buyOneOfToken0 * (10**token1Decimals))).toLocaleString('fullwide', {useGrouping:false});
-	const buyOneOfToken1Wei = (Math.floor(buyOneOfToken1 * (10**token0Decimals))).toLocaleString('fullwide', {useGrouping:false});
+	const buyOneOfToken0Wei = (Math.floor(buyOneOfToken0 * (10**Decimal1))).toLocaleString('fullwide', {useGrouping:false});
+	const buyOneOfToken1Wei = (Math.floor(buyOneOfToken1 * (10**Decimal0))).toLocaleString('fullwide', {useGrouping:false});
 	console.log("price of token0 in value of token1 in lowest decimal : " + buyOneOfToken0Wei);
 	console.log("price of token1 in value of token1 in lowest decimal : " + buyOneOfToken1Wei);
 	console.log("");
@@ -68,11 +68,11 @@ async function st(){
 
 st()
 
-//const testa = {"SqrtX96" : "1795414558883038839252603454575377", "Pair":"USDC/WETH", "T0d":6, "T1d":18}
-//const testb = {"SqrtX96" : "177403796449349488305650", "Pair":"USDT/UNI", "T0d":18, "T1d":6}
-//const testc = {"SqrtX96" : "2155762217846613132494468993", "Pair":"Dai/WETH", "T0d":18, "T1d":18}
-//const testd = {"SqrtX96" : "79230069777981184539141962837", "Pair":"USDC/USDT", "T0d":6, "T1d":6}
-//const teste = {"SqrtX96" : "215524551323017484063050", "Pair":"LINK/USDC", "T0d":18, "T1d":6}
+//const testa = {"SqrtX96" : "1795414558883038839252603454575377", "Pair":"USDC/WETH", "Decimal0":6, "Decimal1":18}
+//const testb = {"SqrtX96" : "177403796449349488305650", "Pair":"USDT/UNI", "Decimal0":18, "Decimal1":6}
+//const testc = {"SqrtX96" : "2155762217846613132494468993", "Pair":"Dai/WETH", "Decimal0":18, "Decimal1":18}
+//const testd = {"SqrtX96" : "79230069777981184539141962837", "Pair":"USDC/USDT", "Decimal0":6, "Decimal1":6}
+//const teste = {"SqrtX96" : "215524551323017484063050", "Pair":"LINK/USDC", "Decimal0":18, "Decimal1":6}
 //GetPrice(testa);
 //GetPrice(testb);
 //GetPrice(testc);

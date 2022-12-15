@@ -37,8 +37,8 @@ async function getData(tokenID){
 	
 	var token0contract =  new ethers.Contract(position.token0, ERC20, provider);
 	var token1contract =  new ethers.Contract(position.token1, ERC20, provider);
-	var token0Decimal = await token0contract.decimals();
-	var token1Decimal = await token1contract.decimals();
+	var Decimal0 = await token0contract.decimals();
+	var Decimal1 = await token1contract.decimals();
 	
 	var token0sym = await token0contract.symbol();
 	var token1sym = await token1contract.symbol();
@@ -55,10 +55,10 @@ async function getData(tokenID){
 	
 	var pairName = token0sym +"/"+ token1sym;
 	
-	var dict = {
+	var PoolInfo = {
 	"Pair": pairName, 
-	"T0d": token0Decimal, 
-	"T1d": token1Decimal, 
+	"Decimal0": Decimal0, 
+	"Decimal1": Decimal1, 
 	"tickCurrent": slot0.tick, 
 	"tickLow": position.tickLower, 
 	"tickHigh": position.tickUpper, 
@@ -72,7 +72,7 @@ async function getData(tokenID){
 	"feeGrowthGlobal0X128": feeGrowthGlobal0.toString(), 
 	"feeGrowthGlobal1X128": feeGrowthGlobal1.toString()}
 	
-	return dict
+	return PoolInfo
 }
 
 
@@ -149,8 +149,8 @@ async function getFees(feeGrowthGlobal0, feeGrowthGlobal1, feeGrowth0Low, feeGro
 	
 	let uncollectedFees_0 = (liquidity * subIn256(fr_t1_0, feeGrowthInsideLast_0)) / Q128;
 	let uncollectedFees_1 = (liquidity * subIn256(fr_t1_1, feeGrowthInsideLast_1)) / Q128;
-	console.log("Amount fees token 0 wei: "+Math.floor(uncollectedFees_0));
-	console.log("Amount fees token 1 wei: "+Math.floor(uncollectedFees_1));
+	console.log("Amount fees token 0 in lowest decimal: "+Math.floor(uncollectedFees_0));
+	console.log("Amount fees token 1 in lowest decimal: "+Math.floor(uncollectedFees_1));
 	
 	
 	let uncollectedFeesAdjusted_0 = (uncollectedFees_0 / toBigNumber(10**decimals0)).toFixed(decimals0);
@@ -161,10 +161,10 @@ async function getFees(feeGrowthGlobal0, feeGrowthGlobal1, feeGrowth0Low, feeGro
 
 
 async function Start(positionID){
-	var data = await getData(positionID);
+	var PoolInfo = await getData(positionID);
 
 	
-	var Fees = await getFees(data.feeGrowthGlobal0X128, data.feeGrowthGlobal1X128, data.feeGrowth0Low, data.feeGrowth0Hi, data.feeGrowthInside0LastX128, data.feeGrowth1Low, data.feeGrowth1Hi, data.feeGrowthInside1LastX128, data.liquidity, data.T0d, data.T1d, data.tickLow, data.tickHigh, data.tickCurrent);
+	var Fees = await getFees(PoolInfo.feeGrowthGlobal0X128, PoolInfo.feeGrowthGlobal1X128, PoolInfo.feeGrowth0Low, PoolInfo.feeGrowth0Hi, PoolInfo.feeGrowthInside0LastX128, PoolInfo.feeGrowth1Low, PoolInfo.feeGrowth1Hi, PoolInfo.feeGrowthInside1LastX128, PoolInfo.liquidity, PoolInfo.Decimal0, PoolInfo.Decimal1, PoolInfo.tickLow, PoolInfo.tickHigh, PoolInfo.tickCurrent);
 
 }
 

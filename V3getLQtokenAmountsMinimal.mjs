@@ -35,8 +35,8 @@ async function getData(tokenID){
 	
 	let token0contract =  new ethers.Contract(position.token0, ERC20, provider);
 	let token1contract =  new ethers.Contract(position.token1, ERC20, provider);
-	let token0Decimal = await token0contract.decimals();
-	let token1Decimal = await token1contract.decimals();
+	let Decimal0 = await token0contract.decimals();
+	let Decimal1 = await token1contract.decimals();
 	
 	let token0sym = await token0contract.symbol();
 	let token1sym = await token1contract.symbol();
@@ -49,9 +49,9 @@ async function getData(tokenID){
 	
 	let pairName = token0sym +"/"+ token1sym;
 	
-	let dict = {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "T0d": token0Decimal, "T1d": token1Decimal, "tickLow": position.tickLower, "tickHigh": position.tickUpper, "liquidity": position.liquidity.toString()}
+	let PoolInfo = {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "Decimal0": Decimal0, "Decimal1": Decimal1, "tickLow": position.tickLower, "tickHigh": position.tickUpper, "liquidity": position.liquidity.toString()}
 
-	return dict
+	return PoolInfo
 }
 
 
@@ -67,48 +67,48 @@ function getTickAtSqrtRatio(sqrtPriceX96){
 }
 
 
-async function getTokenAmounts(liquidity,sqrtPriceX96,tickLow,tickHigh,token0Decimal,token1Decimal){
+async function getTokenAmounts(liquidity,sqrtPriceX96,tickLow,tickHigh,Decimal0,Decimal1){
 	let sqrtRatioBelow = Math.sqrt(1.0001**tickLow);
 	let sqrtRatioAbove = Math.sqrt(1.0001**tickHigh);
 	
 	let currentTick = getTickAtSqrtRatio(sqrtPriceX96);
 	let sqrtPrice = sqrtPriceX96 / Q96;
 	
-	let amount0wei = 0;
-	let amount1wei = 0;
+	let amount0 = 0;
+	let amount1 = 0;
 	if(currentTick <= tickLow){
-		amount0wei = Math.floor(liquidity*((sqrtRatioAbove-sqrtRatioBelow)/(sqrtRatioBelow*sqrtRatioAbove)));
+		amount0 = Math.floor(liquidity*((sqrtRatioAbove-sqrtRatioBelow)/(sqrtRatioBelow*sqrtRatioAbove)));
 	}
 	else if(currentTick > tickHigh){
-		amount1wei = Math.floor(liquidity*(sqrtRatioAbove-sqrtRatioBelow));
+		amount1 = Math.floor(liquidity*(sqrtRatioAbove-sqrtRatioBelow));
 	}
 	else if(currentTick >= tickLow && currentTick < tickHigh){ 
-		amount0wei = Math.floor(liquidity*((sqrtRatioAbove-sqrtPrice)/(sqrtPrice*sqrtRatioAbove)));
-		amount1wei = Math.floor(liquidity*(sqrtPrice-sqrtRatioBelow));
+		amount0 = Math.floor(liquidity*((sqrtRatioAbove-sqrtPrice)/(sqrtPrice*sqrtRatioAbove)));
+		amount1 = Math.floor(liquidity*(sqrtPrice-sqrtRatioBelow));
 	}
 	
-	let amount0Human = (amount0wei/(10**token0Decimal)).toFixed(token0Decimal);
-	let amount1Human = (amount1wei/(10**token1Decimal)).toFixed(token1Decimal);
+	let amount0Human = (amount0/(10**Decimal0)).toFixed(Decimal0);
+	let amount1Human = (amount1/(10**Decimal1)).toFixed(Decimal1);
 
-	console.log("Amount Token0 wei: "+amount0wei);
-	console.log("Amount Token1 wei: "+amount1wei);
+	console.log("Amount Token0 in lowest decimal : "+amount0);
+	console.log("Amount Token1 in lowest decimal : "+amount1);
 	console.log("Amount Token0 : "+amount0Human);
 	console.log("Amount Token1 : "+amount1Human);
-	return [amount0wei, amount1wei]
+	return [amount0, amount1]
 }
 
 
 
 
 async function start(positionID){
-	let data = await getData(positionID);
-	let tokens = await getTokenAmounts(data.liquidity, data.SqrtX96, data.tickLow, data.tickHigh, data.T0d, data.T1d);
+	let PoolInfo = await getData(positionID);
+	let tokens = await getTokenAmounts(PoolInfo.liquidity, PoolInfo.SqrtX96, PoolInfo.tickLow, PoolInfo.tickHigh, PoolInfo.Decimal0, PoolInfo.Decimal1);
 }
 
 
 start(5)
 
-/* Also getTokenAmounts can be used without the position data if you pull the data it will work for any range
+/* Also getTokenAmounts can be used without the position PoolInfo if you pull the PoolInfo it will work for any range
 
 Example of USDC / WETH pool current tick range (11-3-22 5pm PST)
                 Liquidity from pool         current sqrtPrice            LowTick  upTick  token decimals
