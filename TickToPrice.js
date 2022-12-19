@@ -77,7 +77,7 @@ async function getData(token0,token1,fee){
 
 
 function TickToPrice(tick, token0Decimals, token1Decimals){
-	let price0 = (1.0001**tick)/(10**Math.abs(token1Decimals-token0Decimals));
+	let price0 = (1.0001**tick)/(10**(token1Decimals-token0Decimals));
 	let price1 = 1 / price0;
 	return [price0.toFixed(token1Decimals), price1.toFixed(token0Decimals)]
 }
