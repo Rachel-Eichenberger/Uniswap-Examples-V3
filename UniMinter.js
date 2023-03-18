@@ -1,7 +1,5 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545/"));  // local provider for mainnet fork
-//const web3 = new Web3(new Web3.providers.HttpProvider('https://eth-mainnet.alchemyapi.io/v2/E4U5MgSUsq86s3nxU9v6y9Y-hhsLxGCw'));
-//const web3 = new Web3(new Web3.providers.HttpProvider('https://polygon-mainnet.g.alchemy.com/v2/Y_K_ex9iX8xmy7tfboaDQqXTmzE1n2gU'));
 const fs = require('fs');
 const univ3prices = require('@thanpolas/univ3prices');
 
