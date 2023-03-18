@@ -7,7 +7,6 @@ const univ3prices = require('@thanpolas/univ3prices');
 
 
 const private_key = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; //PK or setup ETH accounts next 3 lines
-//const private_key = '02fd7b492de41fbbba9c0830262ce49f88e72d9c2d6016e51655725bdcc46d0d'; //PK or setup ETH accounts next 3 lines
 const address = web3.eth.accounts.privateKeyToAccount(private_key);
 web3.eth.defaultAccount = address['address'];
 var FROM = address['address'];
@@ -17,12 +16,12 @@ let ID;
 
 
 // Load json abi 
-let V3quoterAbi = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/V3quoter.json');
-let UniV3RouterAbi = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/NewUniRouter.json');
-let UniV3NFTAbi = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/UniV3NFT.json');
-let ERC20Abi = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/ERC20.json');
-let WETHAbij = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/WETHAbi.json');
-let V3poolabi = fs.readFileSync('C:/Users/Crypto_Rachel/node/SOLS/V3PairAbi.json');
+let V3quoterAbi = fs.readFileSync('/SOLS/V3quoter.json');
+let UniV3RouterAbi = fs.readFileSync('/SOLS/NewUniRouter.json');
+let UniV3NFTAbi = fs.readFileSync('/SOLS/UniV3NFT.json');
+let ERC20Abi = fs.readFileSync('/node/SOLS/ERC20.json');
+let WETHAbij = fs.readFileSync('/SOLS/WETHAbi.json');
+let V3poolabi = fs.readFileSync('/SOLS/V3PairAbi.json');
 
 const V3Router = JSON.parse(UniV3RouterAbi);
 const V3quote = JSON.parse(V3quoterAbi);
